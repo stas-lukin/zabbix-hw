@@ -7,7 +7,6 @@
 
 ### Использованные команды
 
-```bash
 # Обновление списка пакетов
 sudo apt update
 
@@ -36,6 +35,7 @@ sudo nano /etc/zabbix/zabbix_server.conf  # добавить DBPassword=zabbix12
 # Запуск сервисов
 sudo systemctl restart zabbix-server zabbix-agent apache2
 sudo systemctl enable zabbix-server zabbix-agent apache2
+
 ### Результат
 
 ![Скриншот авторизации в Zabbix](images/zabbix-login.png)
@@ -49,7 +49,6 @@ sudo systemctl enable zabbix-server zabbix-agent apache2
 
 #### Команды для установки и настройки
 
-```bash
 # Подключение к агенту
 ssh -i ~/.ssh/zabbix_key monitor-user@93.77.176.31
 
@@ -77,7 +76,6 @@ sudo systemctl enable zabbix-agent
 
 #### Команды для установки и настройки
 
-```bash
 # Подключение к агенту
 ssh -i ~/.ssh/zabbix_key monitor-user@93.77.185.55
 
