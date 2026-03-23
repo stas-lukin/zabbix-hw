@@ -129,27 +129,24 @@ sudo systemctl enable zabbix-agent
 ### Шаблон CPU and RAM Monitor
 
 ![Шаблон с элементами](images/template-items.png)  
-*Рисунок 5. Шаблон CPU and RAM Monitor с элементами CPU Custom Load и RAM Custom Usage*
+*Рисунок 5. Задание 1. Шаблон CPU and RAM Monitor с элементами CPU Custom Load и RAM Custom Usage*
 
 ### Хосты с привязанными шаблонами
 
-![Хост s-lukin-1 с шаблонами](images/host1-templates.png)  
-*Рисунок 6. Хост s-lukin-1 с шаблонами Linux by Zabbix agent и CPU and RAM Monitor*
-
-![Хост s-lukin-2 с шаблонами](images/host2-templates.png)  
-*Рисунок 7. Хост s-lukin-2 с шаблонами Linux by Zabbix agent и CPU and RAM Monitor*
+![Список хостов с привязанными шаблонами](images/hosts-templates.png)  
+*Рисунок 6. Задание 2-3. Хосты s-lukin-1 и s-lukin-2 с привязанными шаблонами Linux by Zabbix agent и CPU and RAM Monitor (зелёный статус)*
 
 ### Сбор данных
 
 ![Данные с хостов](images/latest-data-both.png)  
-*Рисунок 8. Данные с хостов s-lukin-1 и s-lukin-2: CPU Custom Load и RAM Custom Usage*
+*Рисунок 7. Данные с хостов s-lukin-1 и s-lukin-2: CPU Custom Load и RAM Custom Usage*
 
 ---
 
 ## Задание 4. Создание кастомного дашборда
 
 ![Дашборд мониторинга](images/dashboard.png)  
-*Рисунок 9. Дашборд "Мониторинг CPU и RAM" с графиками для двух хостов*
+*Рисунок 8. Задание 4. Дашборд "Мониторинг CPU и RAM" с графиками для двух хостов*
 
 ---
 
