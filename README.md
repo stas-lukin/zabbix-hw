@@ -3,60 +3,157 @@
 **Студент:** Лукин Станислав
 **Дата:** 23 марта 2026
 
----
+## Задание 1. Установка Zabbix Server с веб-интерфейсом
 
-## Задание 1. Создание шаблона с элементами CPU и RAM
+### Использованные команды
 
-### Шаблон CPU and RAM Monitor
+```bash
+# Обновление списка пакетов
+sudo apt update
 
-![Шаблон с элементами](images/template-items.png)
-*Рисунок 1. Шаблон CPU and RAM Monitor с элементами CPU Custom Load и RAM Custom Usage*
+# Установка PostgreSQL
+sudo apt install -y postgresql postgresql-contrib
 
----
+# Добавление репозитория Zabbix
+cd /tmp
+wget https://repo.zabbix.com/zabbix/6.4/debian/pool/main/z/zabbix-release/zabbix-release_6.4-1+debian11_all.deb
+sudo dpkg -i zabbix-release_6.4-1+debian11_all.deb
+sudo apt update
 
-## Задание 2-3. Добавление хостов и привязка шаблонов
+# Установка Zabbix Server
+sudo apt install -y zabbix-server-pgsql zabbix-frontend-php php-pgsql zabbix-apache-conf zabbix-sql-scripts zabbix-agent
 
-### Хост s-lukin-1
+# Создание базы данных
+sudo -u postgres createuser --pwprompt zabbix
+sudo -u postgres createdb -O zabbix zabbix
 
-![Хост s-lukin-1 с шаблонами](images/host1-templates.png)
-*Рисунок 2. Хост s-lukin-1 с привязанными шаблонами Linux by Zabbix agent и CPU and RAM Monitor*
+# Импорт структуры базы данных
+sudo -u zabbix psql zabbix < /usr/share/zabbix-sql-scripts/postgresql/server.sql
 
-### Хост s-lukin-2
+# Настройка пароля в конфиге
+sudo nano /etc/zabbix/zabbix_server.conf  # добавить DBPassword=zabbix123
 
-![Хост s-lukin-2 с шаблонами](images/host2-templates.png)
-*Рисунок 3. Хост s-lukin-2 с привязанными шаблонами Linux by Zabbix agent и CPU and RAM Monitor*
+# Запуск сервисов
+sudo systemctl restart zabbix-server zabbix-agent apache2
+sudo systemctl enable zabbix-server zabbix-agent apache2
 
----
+Результат
 
-### Список хостов
+![Скриншот входа](images/zabbix-login.png)
+Рисунок 1. Главная панель администратора
+Задание 2. Установка Zabbix Agent на два хоста
+Agent 1 (s-lukin-1
+Команды для установки и настройки
+bash
 
-![Список хостов](images/hosts-list.png)
-*Рисунок 4. Хосты s-lukin-1 и s-lukin-2 в разделе Hosts*
+# Подключение к агенту
+ssh -i ~/.ssh/zabbix_key monitor-user@158.160.118.50
 
----
+# Установка агента
+sudo apt update
+sudo apt install -y zabbix-agent
 
-### Сбор данных с хостов
+# Настройка конфигурации
+sudo nano /etc/zabbix/zabbix_agentd.conf
+# Изменены параметры:
+# Server=10.128.0.17
+# ServerActive=10.128.0.17
+# Hostname=s-lukin-1
 
-![Данные с хостов](images/latest-data-both.png)
-*Рисунок 5. Данные с хостов s-lukin-1 и s-lukin-2: CPU Custom Load и RAM Custom Usage*
+# Запуск агента
+sudo systemctl restart zabbix-agent
+sudo systemctl enable zabbix-agent
 
----
+Лог агента
 
-## Задание 4. Создание кастомного дашборда
+![Лог agent 1](images/agent1-log.png)
+*Рисунок 2. Лог работы агента s-lukin-1*
+Agent 2 (s-lukin-2
+Команды для установки и настройки
+bash
 
-![Дашборд мониторинга](images/dashboard.png)
-*Рисунок 6. Дашборд "Мониторинг CPU и RAM" с графиками для двух хостов*
+# Подключение к агенту
+ssh -i ~/.ssh/zabbix_key monitor-user@46.21.244.242
 
----
+# Установка агента
+sudo apt update
+sudo apt install -y zabbix-agent
 
-## Заключение
+# Настройка конфигурации
+sudo nano /etc/zabbix/zabbix_agentd.conf
+# Изменены параметры:
+# Server=10.128.0.17
+# ServerActive=10.128.0.17
+# Hostname=s-lukin-2
+
+# Запуск агента
+sudo systemctl restart zabbix-agent
+sudo systemctl enable zabbix-agent
+
+Лог агента
+
+![Лог agent 2](images/agent2-log.png)
+*Рисунок 3. Лог работы агента s-lukin-2*
+Добавление хостов в веб-интерфейс
+
+В веб-интерфейсе Zabbix:
+
+    Data collection → Hosts → Create host
+
+    Для s-lukin-1:
+
+        Host name: s-lukin-1
+
+        Groups: Linux Servers
+
+        Interfaces: Agent → IP: 10.128.0.29, Port: 10050
+
+        Templates: Template OS Linux by Zabbix agent
+
+    Для s-lukin-2:
+
+        Host name: s-lukin-2
+
+        Interfaces: Agent → IP: 10.128.0.30, Port: 10050
+
+        Templates: Template OS Linux by Zabbix agent
+
+Результат
+
+![Список хостов](images/zabbix-hosts.png)
+Рисунок 4. Все три хоста с зелёными индикаторами ZBX
+Задание 3. Создание шаблона и привязка к хостам
+Шаблон CPU and RAM Monitor
+
+![Шаблон](images/template-items.png)
+Рисунок 5. Шаблон CPU and RAM Monitor с элементами CPU Custom Load и RAM Custom Usage
+Хосты с привязанными шаблонами
+
+![Хост 1](images/host1-templates.png)
+*Рисунок 6. Хост s-lukin-1 с шаблонами Linux by Zabbix agent и CPU and RAM Monitor*
+
+![Хост 2](images/host2-templates.png)
+*Рисунок 7. Хост s-lukin-2 с шаблонами Linux by Zabbix agent и CPU and RAM Monitor*
+Сбор данных
+
+![Данные](images/latest-data-both.png)
+*Рисунок 8. Данные с хостов s-lukin-1 и s-lukin-2: CPU Custom Load и RAM Custom Usage*
+Задание 4. Создание кастомного дашборда
+
+![Дашборд](images/dashboard.png)
+Рисунок 9. Дашборд "Мониторинг CPU и RAM" с графиками для двух хостов
+Заключение
 
 В результате выполнения домашнего задания:
 
-1. Создан шаблон `CPU and RAM Monitor` с элементами для сбора загрузки CPU и RAM
-2. Добавлены хосты `s-lukin-1` и `s-lukin-2` с привязкой шаблонов
-3. Настроены UserParameter на агентах для кастомных ключей:
-   - `custom.cpu.load` — загрузка CPU из /proc/stat
-   - `custom.ram.usage` — использование RAM из free
-4. Создан дашборд `Мониторинг CPU и RAM` с четырьмя графиками
-5. Все скриншоты подтверждают работоспособность системы
+    Установлен и настроен Zabbix Server 6.4 на Debian 11
+
+    Установлены и настроены Zabbix Agent на двух хостах
+
+    Создан шаблон CPU and RAM Monitor с элементами для сбора загрузки CPU и RAM
+
+    Добавлены хосты s-lukin-1 и s-lukin-2 с привязкой шаблонов
+
+    Настроены UserParameter на агентах для кастомных ключей
+
+    Создан дашборд Мониторинг CPU и RAM с графиками для двух хостов
